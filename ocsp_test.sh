@@ -1,7 +1,7 @@
 #!/bin/bash
 WORKSPACE=`pwd`
 PASS=1234test
-KEY_DIR=${WORKSPACE}/keystores
+BUILD_DIR=${WORKSPACE}/build
 HOSTNAME=localhost
 OCSP_PORT=16975
 
@@ -30,12 +30,12 @@ prepareClientKeyMaterial() {
   exportKeystores $1
 }
 
-if [ -d "$KEY_DIR" ]; then
-  rm -rf "$KEY_DIR"
+if [ -d "$BUILD_DIR" ]; then
+  rm -rf "$BUILD_DIR"
 fi
-mkdir ${KEY_DIR}
+mkdir ${BUILD_DIR}
 
-pushd "${KEY_DIR}"
+pushd "${BUILD_DIR}"
 mkdir -p demoCA/newcerts
 echo 01 > demoCA/serial
 touch demoCA/index.txt
@@ -69,7 +69,8 @@ openssl ocsp -index demoCA/index.txt -port ${OCSP_PORT} -CA ca-cert.pem -rsigner
 OCSP_PID=$!
 sleep 2
 
+popd # $BUILD_DIR
+
 
 
 kill $OCSP_PID
-popd # $KEY_DIR
