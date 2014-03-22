@@ -222,6 +222,7 @@ authorityInfoAccess = OCSP;URI:http://localhost:16975
 
 basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+authorityInfoAccess = OCSP;URI:http://localhost:16975
 
 [ v3_ca ]
 
