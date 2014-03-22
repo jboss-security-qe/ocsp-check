@@ -1,9 +1,9 @@
 #!/bin/bash
-WORKSPACE=`pwd`
-PASS=1234test
-BUILD_DIR=${WORKSPACE}/build
-HOSTNAME=localhost
-OCSP_PORT=16975
+
+if [ -d "$BUILD_DIR" ]; then
+  rm -rf "$BUILD_DIR"
+fi
+mkdir ${BUILD_DIR}
 
 exportKeystores () {
   # En/Decode CRT/PEM
@@ -16,6 +16,8 @@ exportKeystores () {
   openssl pkcs12 -export -in $1-cert.pem -inkey $1-key.pem -out $1.p12 -name $1 -passout pass:${PASS}
   # converting PKCS12 to JKS
   keytool -importkeystore -noprompt -srckeystore $1.p12 -srcstoretype PKCS12 -srcstorepass ${PASS} -destkeystore $1.jks -deststoretype JKS -deststorepass ${PASS}
+  # import CRT to truststore
+  keytool -import -noprompt -alias $1 -keystore trusted-clients.jks -storepass ${PASS} -file $1-cert.crt
 }
 
 prepareClientKeyMaterial() {
@@ -30,12 +32,8 @@ prepareClientKeyMaterial() {
   exportKeystores $1
 }
 
-if [ -d "$BUILD_DIR" ]; then
-  rm -rf "$BUILD_DIR"
-fi
-mkdir ${BUILD_DIR}
-
 pushd "${BUILD_DIR}"
+
 mkdir -p demoCA/newcerts
 echo 01 > demoCA/serial
 touch demoCA/index.txt
@@ -65,12 +63,4 @@ openssl req -new -config ${WORKSPACE}/openssl.cnf -keyform PEM -key ocsp-key.pem
 openssl ca -config ${WORKSPACE}/openssl.cnf -extensions v3_OCSP -extfile ${WORKSPACE}/openssl.cnf -batch -keyfile ca-key.pem -cert ca-cert.pem -out ocsp-cert.pem -infiles ocsp-cert.csr
 exportKeystores ocsp
 
-openssl ocsp -index demoCA/index.txt -port ${OCSP_PORT} -CA ca-cert.pem -rsigner ocsp-cert.pem -rkey ocsp-key.pem -text -out ocsp_responder.log 2>ocsp_err.log 1>ocsp_out.log &
-OCSP_PID=$!
-sleep 2
-
 popd # $BUILD_DIR
-
-
-
-kill $OCSP_PID
