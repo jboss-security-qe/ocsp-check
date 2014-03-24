@@ -25,10 +25,10 @@ prepareClientKeyMaterial() {
   # Generate a key
   openssl genpkey -outform PEM -out $1-key.pem -algorithm RSA -pkeyopt rsa_keygen_bits:2048
   # Create a CSR request
-  openssl req -new -config ${WORKSPACE}/openssl.cnf -keyform PEM -key $1-key.pem -outform PEM -out $1-cert.csr -days 365 -subj "/C=CZ/O=Red Hat/OU=JBoss/OU=Security QE/CN=$1"
+  openssl req -new -config ${OPENSSL_CONF} -keyform PEM -key $1-key.pem -outform PEM -out $1-cert.csr -days 365 -subj "/C=CZ/O=Red Hat/OU=JBoss/OU=Security QE/CN=$1"
   # Issue a certificate
-  # openssl x509 -req -extensions v3_req -extfile ${WORKSPACE}/openssl.cnf -inform DER -in $1-cert.csr -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -outform DER -out $1-cert.crt
-  openssl ca -config ${WORKSPACE}/openssl.cnf -extensions v3_req -extfile ${WORKSPACE}/openssl.cnf -batch -keyfile ca-key.pem -cert ca-cert.pem -out $1-cert.pem -infiles $1-cert.csr
+  # openssl x509 -req -extensions v3_req -extfile ${OPENSSL_CONF} -inform DER -in $1-cert.csr -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -outform DER -out $1-cert.crt
+  openssl ca -config ${OPENSSL_CONF} -extensions v3_req -extfile ${OPENSSL_CONF} -batch -keyfile ca-key.pem -cert ca-cert.pem -out $1-cert.pem -infiles $1-cert.csr
   exportKeystores $1
 }
 
@@ -41,7 +41,7 @@ touch demoCA/index.txt
 echo ">>> Generate CA key material"
 # Generate CA files
 openssl genpkey -outform PEM -out ca-key.pem -algorithm RSA -pkeyopt rsa_keygen_bits:2048
-openssl req -new -x509 -extensions v3_ca -config ${WORKSPACE}/openssl.cnf -keyform PEM -key ca-key.pem -outform DER -out ca-cert.crt -days 365 -subj '/C=CZ/O=Red Hat/OU=JBoss/OU=Security QE/CN=EAP Certification Authority'
+openssl req -new -x509 -extensions v3_ca -config ${OPENSSL_CONF} -keyform PEM -key ca-key.pem -outform DER -out ca-cert.crt -days 365 -subj '/C=CZ/O=Red Hat/OU=JBoss/OU=Security QE/CN=EAP Certification Authority'
 exportKeystores ca
 
 echo ">>> Generate EAP key material"
@@ -52,15 +52,15 @@ prepareClientKeyMaterial valid-client
 
 echo ">>> Generate Revoked client key material"
 prepareClientKeyMaterial revoked-client
-openssl ca -config ${WORKSPACE}/openssl.cnf -keyfile ca-key.pem -cert ca-cert.pem -revoke revoked-client-cert.pem
+openssl ca -config ${OPENSSL_CONF} -keyfile ca-key.pem -cert ca-cert.pem -revoke revoked-client-cert.pem
 
 echo ">>> Generate OCSP responder key material"
 # Generate a key
 openssl genpkey -outform PEM -out ocsp-key.pem -algorithm RSA -pkeyopt rsa_keygen_bits:2048
 # Create a CSR request
-openssl req -new -config ${WORKSPACE}/openssl.cnf -keyform PEM -key ocsp-key.pem -outform PEM -out ocsp-cert.csr -days 365 -subj "/C=CZ/O=Red Hat/OU=JBoss/OU=OCSP Responder/CN=${HOSTNAME}"
+openssl req -new -config ${OPENSSL_CONF} -keyform PEM -key ocsp-key.pem -outform PEM -out ocsp-cert.csr -days 365 -subj "/C=CZ/O=Red Hat/OU=JBoss/OU=OCSP Responder/CN=${HOSTNAME}"
 # Issue a certificate
-openssl ca -config ${WORKSPACE}/openssl.cnf -extensions v3_OCSP -extfile ${WORKSPACE}/openssl.cnf -batch -keyfile ca-key.pem -cert ca-cert.pem -out ocsp-cert.pem -infiles ocsp-cert.csr
+openssl ca -config ${OPENSSL_CONF} -extensions v3_OCSP -extfile ${OPENSSL_CONF} -batch -keyfile ca-key.pem -cert ca-cert.pem -out ocsp-cert.pem -infiles ocsp-cert.csr
 exportKeystores ocsp
 
 popd # $BUILD_DIR
