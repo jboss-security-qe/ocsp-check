@@ -1,0 +1,4 @@
+<jboss-web>
+	<security-domain flushOnSessionInvalidation="true">web-tests</security-domain>
+	<disable-audit>false</disable-audit>
+</jboss-web>
