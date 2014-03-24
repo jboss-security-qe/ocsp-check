@@ -2,6 +2,12 @@
 
 pushd ${BUILD_DIR}
 
+if [ -d "$JBOSS_HOME" ]; then
+  echo "Removing old JBoss AS folder"
+  rm -rf "$JBOSS_HOME"
+fi
+
+echo "Installing JBoss AS from a ZIP"
 unzip -q "${EAP_INST}"
 
 # Start server
@@ -10,6 +16,10 @@ ${JBOSS_HOME}/bin/standalone.sh >jboss_console.log 2>&1 &
 sleep 15
 
 # prepare configuration script
+
+# The org.jboss.test.ocsp.PKIXCertificateVerifier is only a workaround
+# for https://bugzilla.redhat.com/show_bug.cgi?id=1080132
+# PicketBox contains only an empty implementation in the org.jboss.security.auth.certs.AnyCertVerifier
 
 cat >cofigure_https.cli << EOT
 /subsystem=logging/logger=org.jboss.security:add(level=TRACE)
@@ -28,7 +38,7 @@ cat >cofigure_https.cli << EOT
 
 /subsystem=security/security-domain=web-tests:add
 /subsystem=security/security-domain=web-tests/authentication=classic:add
-/subsystem=security/security-domain=web-tests/authentication=classic/login-module=CertificateRoles:add(code=CertificateRoles, flag=required, module-options=[("securityDomain"=>"trust-domain"), ("verifier"=>"org.jboss.security.auth.certs.AnyCertVerifier")])
+/subsystem=security/security-domain=web-tests/authentication=classic/login-module=CertificateRoles:add(code=CertificateRoles, flag=required, module-options=[("securityDomain"=>"trust-domain"), ("verifier"=>"org.jboss.test.ocsp.PKIXCertificateVerifier")])
 
 /core-service=management/security-realm=ManagementRealmWeb:add
 /core-service=management/security-realm=ManagementRealmWeb/server-identity=ssl:add(alias=localhost, keystore-password=${PASS}, keystore-path=${BUILD_DIR}/localhost.jks)

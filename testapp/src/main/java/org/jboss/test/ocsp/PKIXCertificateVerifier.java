@@ -42,7 +42,9 @@ import java.util.Set;
 import org.jboss.security.auth.certs.X509CertificateVerifier;
 
 /**
- * 
+ * This class is only a workaround for missing PKIX certificate path validation implementation
+ * in the PicketBox. It's reported as a BZ https://bugzilla.redhat.com/show_bug.cgi?id=1080132
+ *
  * @author Josef Cacek
  */
 public class PKIXCertificateVerifier implements X509CertificateVerifier {

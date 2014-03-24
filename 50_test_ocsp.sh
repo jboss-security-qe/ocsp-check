@@ -32,4 +32,6 @@ let 'OCSP_TEST_EXIT<<=1'
 
 # TODO wget https://localhost:9443/management/
 
+export OCSP_TEST_EXIT
+
 popd # ${BUILD_DIR}
