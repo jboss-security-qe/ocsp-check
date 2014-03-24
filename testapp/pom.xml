@@ -26,42 +26,11 @@
 			<version>1.0.1.Final</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.picketbox</groupId>
+			<artifactId>jbosssx</artifactId>
+			<version>4.0.19.SP4</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
-
-	<profiles>
-		<!-- include JSTL 1.1.2 - Apache Taglibs -->
-		<profile>
-			<id>include-jstl</id>
-			<activation>
-				<property>
-					<name>jstl</name>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>javax.servlet</groupId>
-					<artifactId>jstl</artifactId>
-					<version>1.1.2</version>
-				</dependency>
-				<dependency>
-					<groupId>taglibs</groupId>
-					<artifactId>standard</artifactId>
-					<version>1.1.2</version>
-				</dependency>
-				<dependency>
-					<groupId>taglibs</groupId>
-					<artifactId>c</artifactId>
-					<version>1.1.2</version>
-					<type>tld</type>
-				</dependency>
-				<dependency>
-					<groupId>taglibs</groupId>
-					<artifactId>fmt</artifactId>
-					<version>1.1.2</version>
-					<type>tld</type>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 </project>
