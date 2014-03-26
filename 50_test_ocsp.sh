@@ -2,9 +2,9 @@
 
 pushd ${BUILD_DIR}
 
-wget https://localhost:8443/testapp/ --ca-certificate=${BUILD_DIR}/ca-cert.pem -O revoked-client-test.txt --certificate=${BUILD_DIR}/revoked-client-cert.pem --private-key=${BUILD_DIR}/revoked-client-key.pem
+wget https://localhost:8443/testapp/ --ca-certificate=${BUILD_DIR}/ca-cert.pem -O revoked-client-test.txt --certificate=${BUILD_DIR}/revoked-client-cert.pem --private-key=${BUILD_DIR}/revoked-client-key.pem || true
 
-wget https://localhost:8443/testapp/ --ca-certificate=${BUILD_DIR}/ca-cert.pem -O valid-client-test.txt --certificate=${BUILD_DIR}/valid-client-cert.pem --private-key=${BUILD_DIR}/valid-client-key.pem
+wget https://localhost:8443/testapp/ --ca-certificate=${BUILD_DIR}/ca-cert.pem -O valid-client-test.txt --certificate=${BUILD_DIR}/valid-client-cert.pem --private-key=${BUILD_DIR}/valid-client-key.pem || true
 
 OCSP_TEST_EXIT=0
 
