@@ -13,22 +13,22 @@ if ! (grep -q "The testapp index" valid-client-test.txt); then
   echo "[FAILURE] Valid client didn't reach the test application"
   let OCSP_TEST_EXIT++
 fi
-let 'OCSP_TEST_EXIT<<=1'
+OCSP_TEST_EXIT=$((OCSP_TEST_EXIT<<1))
 if (grep -q "The testapp index" revoked-client-test.txt); then
   echo "[FAILURE] Revoked client reached the test application"
   let OCSP_TEST_EXIT++
 fi
-let 'OCSP_TEST_EXIT<<=1'
+OCSP_TEST_EXIT=$((OCSP_TEST_EXIT<<1))
 if ! (grep -q "Cert Status: good" ocsp_responder.log); then
   echo "[FAILURE] OCSP responder didn't check the valid client"
   let OCSP_TEST_EXIT++
 fi
-let 'OCSP_TEST_EXIT<<=1'
+OCSP_TEST_EXIT=$((OCSP_TEST_EXIT<<1))
 if ! (grep -q "Cert Status: revoked" ocsp_responder.log); then
   echo "[FAILURE] OCSP responder didn't check the revoked client"
   let OCSP_TEST_EXIT++
 fi
-let 'OCSP_TEST_EXIT<<=1'
+OCSP_TEST_EXIT=$((OCSP_TEST_EXIT<<1))
 
 # TODO wget https://localhost:9443/management/
 
